@@ -25,9 +25,13 @@ public class EventBus {
     private Map<Object, List<MethodInfo>> cacheMap = new HashMap<>();
 
     /**
+     * 粘性事件的最大数量
+     */
+    private static final int NUM_STICK_MAX = 10;
+    /**
      * 保存粘性事件,key是事件，value是事件封装
      */
-    private List<Object> cacheStickList = new ArrayList<>();
+    private List<Object> cacheStickList = new ArrayList<>(NUM_STICK_MAX);
 
     private EventBus() {
     }
@@ -81,6 +85,9 @@ public class EventBus {
     public static void postStick(Object setter) {
         helper.post(instance.cacheMap, setter);
         if (!instance.cacheStickList.contains(setter)) {
+            if (instance.cacheStickList.size() == NUM_STICK_MAX) {
+                instance.cacheStickList.remove(NUM_STICK_MAX - 1);
+            }
             instance.cacheStickList.add(setter);
         }
     }
@@ -102,6 +109,7 @@ public class EventBus {
 
     /**
      * 取消事件在不同优先级方法中的传递
+     *
      * @param setter 事件对象
      */
     public static void cancelLowerPriority(Object setter) {

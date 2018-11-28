@@ -38,7 +38,7 @@ public class EventHelper {
     /**
      * 中断传递的事件缓存
      */
-    private List<Object> cacheCancelList = new ArrayList<>();
+    private List<Object> cacheCancelList = new ArrayList<>(3);
 
     /**
      * 中断事件在不同优先级方法中的传递
@@ -46,6 +46,10 @@ public class EventHelper {
      */
     public void cancelLowerPriority(Object setter){
         if(!cacheCancelList.contains(setter)){
+
+            if(cacheCancelList.size() == 3){
+                cacheCancelList.remove(2);
+            }
             cacheCancelList.add(setter);
         }
     }
